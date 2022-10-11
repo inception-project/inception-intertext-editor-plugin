@@ -1,0 +1,7 @@
+node_modules
+dist/RecogitoEditor.css
+dist/RecogitoEditor.css.map
+dist/RecogitoEditor.js
+dist/RecogitoEditor.js.map
+dist/RecogitoEditor.min.css.map
+dist/RecogitoEditor.min.js.map

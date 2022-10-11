@@ -1,0 +1,7 @@
+{
+  "name": "Intertext (external)",
+  "factory": "IntertextEditor.factory()",
+  "scripts": [ "dist/IntertextEditor.min.js" ],
+  "stylesheets": [ "dist/IntertextEditor.min.css", "styles/intertext.css" ],
+  "view": "iframe:cas+xhtml+xml"
+}
