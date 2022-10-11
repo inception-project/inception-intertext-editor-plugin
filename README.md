@@ -6,7 +6,7 @@
 
 This repository is an example based on the [RecogitoJS](https://github.com/recogito/recogito-js) JavaScript editor component of how to integrate a JavaScript-based annotation editor with INCEpTION. It also uses a special CSS stylesheet to render two separately scrolling areas. This feature depends on the **generic XML** importer from INCEpTION and requires that the imported files follow this structure:
 
-````
+```
 <div class="view-side-by-side">
   <div class="view-left">
     ...
