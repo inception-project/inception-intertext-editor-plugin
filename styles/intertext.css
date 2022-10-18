@@ -20,7 +20,7 @@
   display: flex;
  }
 
-html, body, .r6o-content-wrapper {
+html, body, .annotator-wrapper, .r6o-content-wrapper {
   max-height: 100%;
   min-height: 100%;
   height: 100%;
@@ -53,6 +53,10 @@ html, body, .r6o-content-wrapper {
  .p {
   margin-bottom: 0.5em;
  }
+ 
+ .s {
+  display: inline;
+}
 
  .ref::before {
   content: "•";
@@ -83,3 +87,4 @@ html, body, .r6o-content-wrapper {
  .non-textual::before {
   content: "Non-textual content"
  }
+ 
