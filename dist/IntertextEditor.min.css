@@ -2084,11 +2084,12 @@ svg.r6o-connections-canvas {
   left: 0;
   width: 100vw;
   height: 100vh;
+  pointer-events: none;
 }
-svg.r6o-connections-canvas pointer-events:none .has-events {
+svg.r6o-connections-canvas .has-events {
   pointer-events: auto;
 }
-svg.r6o-connections-canvas pointer-events:none .has-events * {
+svg.r6o-connections-canvas .has-events * {
   pointer-events: auto;
 }
 svg.r6o-connections-canvas .r6o-connections-hidden {
@@ -2283,11 +2284,8 @@ svg.r6o-connections-canvas .r6o-connections-edge-label text {
 body {
   line-height: 300%;
 }
-svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-label {
-  pointer-events: none;
-}
-svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-path {
-  pointer-events: bounding-box;
+svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-label tspan {
+  pointer-events: none !important;
 }
 svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-path:hover .r6o-connections-edge-path-inner {
   stroke-width: 3px;

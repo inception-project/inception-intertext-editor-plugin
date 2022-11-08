@@ -23,13 +23,13 @@ body {
 
 svg.r6o-connections-canvas {
   .r6o-connections-edge {
-    .r6o-connections-edge-label {
-      pointer-events: none;
+    .r6o-connections-edge-label tspan {
+      pointer-events: none !important;
     }
 
-    .r6o-connections-edge-path {
-      pointer-events: bounding-box;
-    }
+    // .r6o-connections-edge-path {
+    //   pointer-events: bounding-box;
+    // }
 
     .r6o-connections-edge-path:hover {
       .r6o-connections-edge-path-inner {
