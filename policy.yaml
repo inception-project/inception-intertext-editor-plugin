@@ -1,0 +1,6 @@
+name: InterText policy
+version: 0.1
+case_sensitive: false
+policies:
+  - { elements: ["div"], action: "PASS" }
+  - { attributes: ["class"], action: "PASS" }

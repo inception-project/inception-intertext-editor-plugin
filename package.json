@@ -8,7 +8,7 @@
   "dependencies": {
     "@inception-project/inception-js-api": "*",
     "@recogito/recogito-js": "^1.8.1",
-    "@recogito/recogito-connections": "^0.1.7",
+    "@recogito/recogito-connections": "^0.1.8",
     "@recogito/recogito-client-core": "1.7.7"
   },
   "devDependencies": {

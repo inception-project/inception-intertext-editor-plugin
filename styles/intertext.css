@@ -85,6 +85,6 @@ html, body, .annotator-wrapper, .r6o-content-wrapper {
 }
 
  .non-textual::before {
-  content: "Non-textual content"
+  content: "Non-textual content";
  }
  
