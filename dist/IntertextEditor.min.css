@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 /* node_modules/@recogito/recogito-js/dist/recogito.min.css */
 .r6o-drawing {
   cursor: none;
@@ -2082,12 +2084,11 @@ svg.r6o-connections-canvas {
   left: 0;
   width: 100vw;
   height: 100vh;
-  pointer-events: none;
 }
-svg.r6o-connections-canvas .has-events {
+svg.r6o-connections-canvas pointer-events:none .has-events {
   pointer-events: auto;
 }
-svg.r6o-connections-canvas .has-events * {
+svg.r6o-connections-canvas pointer-events:none .has-events * {
   pointer-events: auto;
 }
 svg.r6o-connections-canvas .r6o-connections-hidden {
@@ -2278,8 +2279,24 @@ svg.r6o-connections-canvas .r6o-connections-edge-label text {
   background-color: #4f92d7;
 }
 
-/* src/recogito/RecogitoEditor.css */
+/* src/recogito/RecogitoEditor.scss */
 body {
   line-height: 300%;
+}
+svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-label {
+  pointer-events: none;
+}
+svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-path {
+  pointer-events: bounding-box;
+}
+svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-path:hover .r6o-connections-edge-path-inner {
+  stroke-width: 3px;
+}
+svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-path:hover .r6o-connections-edge-base,
+svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-path:hover .r6o-connections-edge-head {
+  stroke-width: 3px;
+}
+svg.r6o-connections-canvas .r6o-connections-edge .r6o-connections-edge-path:hover .r6o-connections-edge-path-buffer {
+  stroke: rgba(235, 170, 19, 0.7) !important;
 }
 /*# sourceMappingURL=IntertextEditor.min.css.map */

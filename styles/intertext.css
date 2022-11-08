@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
- .view-side-by-side {
+.view-side-by-side {
   display: flex;
- }
+}
 
 html, body, .annotator-wrapper, .r6o-content-wrapper {
   max-height: 100%;

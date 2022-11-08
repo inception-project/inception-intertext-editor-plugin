@@ -20,10 +20,11 @@ import { Recogito } from '@recogito/recogito-js/src'
 import Connections from '@recogito/recogito-connections/src'
 import { AnnotationEditor, CompactAnnotatedText, CompactSpan, DiamAjax, VID } from '@inception-project/inception-js-api'
 import { CompactRelation } from '@inception-project/inception-js-api/src/model/compact/CompactRelation'
-import './RecogitoEditor.css'
+import './RecogitoEditor.scss'
 import { DiamLoadAnnotationsOptions } from '@inception-project/inception-js-api/src/diam/DiamAjax'
 import { ViewportTracker } from '@inception-project/inception-js-api/src/util/ViewportTracker'
 import { calculateStartOffset, offsetToRange } from '@inception-project/inception-js-api/src/util/OffsetUtils'
+import convert from 'color-convert'
 
 interface WebAnnotation {
   id: string;
@@ -86,6 +87,8 @@ export class RecogitoEditor implements AnnotationEditor {
     // this.recogito.on('updateConnection', annotation => this.createAnnotation(annotation))
     // this.recogito.on('deleteConnection', annotation => this.createAnnotation(annotation))
 
+    this.installColorRenderingPatch(this.recogito)
+
     this.leftView = element.querySelector('.view-left') || undefined
     if (this.leftView) {
       this.leftTracker = new ViewportTracker(this.leftView, () => this.loadAnnotations())
@@ -97,6 +100,41 @@ export class RecogitoEditor implements AnnotationEditor {
     }
   }
 
+  /**
+   * Recogito does not support rendering annotations with a custom color. This is a workaround.
+   */
+  private installColorRenderingPatch(recogito: Recogito) {
+    const _setAnnotations = recogito.setAnnotations
+    recogito.setAnnotations = annotations => {
+      // Set annotations on instance first
+      return _setAnnotations(annotations).then(() => {
+        for (const annotation of annotations) {
+          for (const element of this.root.querySelectorAll(`[data-id="${annotation.id}"]`)) {
+            const c = convert.hex.rgb(annotation.body.color)
+
+            // Span annotation
+            if (element instanceof HTMLElement) {
+              element.style.backgroundColor = `rgba(${c[0]}, ${c[1]}, ${c[2]}, 0.2)`
+              element.style.borderBottomColor = annotation.body.color
+            }
+
+            // Relation annotation
+            if (element instanceof SVGElement) {
+              element.querySelectorAll('.r6o-connections-edge-path-inner').forEach(path => {
+                if (path instanceof SVGElement) {
+                  path.style.stroke = annotation.body.color
+                }
+              })
+            }
+          }
+        }
+      })
+    }
+  }
+
+  /**
+   * Prevent right click from triggering a selection event.
+   */
   private cancelRightClick (e: Event): void {
     if (e instanceof MouseEvent) {
       if (e.button === 2) {
@@ -209,6 +247,7 @@ export class RecogitoEditor implements AnnotationEditor {
         body: {
           type: 'TextualBody',
           purpose: 'tagging',
+          color: span[2]?.c || '#000000',
           value: span[2]?.l || ''
         },
         target: {
@@ -227,6 +266,7 @@ export class RecogitoEditor implements AnnotationEditor {
         body: {
           type: 'TextualBody',
           purpose: 'tagging',
+          color: relation[2]?.c || '#000000',
           value: relation[2]?.l || ''
         },
         motivation: 'linking',
