@@ -1,14 +1,14 @@
 {
-  "name": "inception-recogito-editor-plugin",
+  "name": "inception-intertext-editor-plugin",
   "version": "0.0.1",
-  "description": "RecogitoJS annotation editor plugin",
+  "description": "Intertext (RecogitoJS) annotation editor plugin",
   "scripts": {
     "build": "node build.mjs"
   },
   "dependencies": {
     "@inception-project/inception-js-api": "*",
     "@recogito/recogito-js": "^1.8.1",
-    "@recogito/recogito-connections": "^0.1.8",
+    "@recogito/recogito-connections": "^0.1.10",
     "@recogito/recogito-client-core": "1.7.7",
     "color-convert": "^2.0.1"
   },

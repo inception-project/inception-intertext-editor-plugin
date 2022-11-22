@@ -19,6 +19,6 @@ import { IntertextEditorFactory } from './recogito/IntertextEditorFactory';
 
 const INSTANCE = new IntertextEditorFactory()
 
-export function factory(): IntertextEditorFactory {
-  return INSTANCE;
+export function factory (): IntertextEditorFactory {
+  return INSTANCE
 }

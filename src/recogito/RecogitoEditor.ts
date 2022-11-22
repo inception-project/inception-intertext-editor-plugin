@@ -26,14 +26,6 @@ import { ViewportTracker } from '@inception-project/inception-js-api/src/util/Vi
 import { calculateStartOffset, offsetToRange } from '@inception-project/inception-js-api/src/util/OffsetUtils'
 import convert from 'color-convert'
 
-interface WebAnnotation {
-  id: string;
-  type: string;
-  motivation?: string;
-  target: WebAnnotationTextPositionSelector | Array<WebAnnotationAnnotationTarget>;
-  body: WebAnnotationBodyItem | Array<WebAnnotationBodyItem>;
-}
-
 interface WebAnnotationBodyItem {
   type: string;
   value: string;
@@ -49,6 +41,14 @@ interface WebAnnotationTextPositionSelector {
     start: number;
     end: number;
   }
+}
+
+interface WebAnnotation {
+  id: string;
+  type: string;
+  motivation?: string;
+  target: WebAnnotationTextPositionSelector | Array<WebAnnotationAnnotationTarget>;
+  body: WebAnnotationBodyItem | Array<WebAnnotationBodyItem>;
 }
 
 export class RecogitoEditor implements AnnotationEditor {
@@ -103,7 +103,7 @@ export class RecogitoEditor implements AnnotationEditor {
   /**
    * Recogito does not support rendering annotations with a custom color. This is a workaround.
    */
-  private installColorRenderingPatch(recogito: Recogito) {
+  private installColorRenderingPatch (recogito: Recogito) {
     const _setAnnotations = recogito.setAnnotations
     recogito.setAnnotations = annotations => {
       // Set annotations on instance first
@@ -164,8 +164,8 @@ export class RecogitoEditor implements AnnotationEditor {
     e.stopPropagation()
   }
 
-  public loadAnnotations(): void {
-    console.log("loadAnnotations")
+  public loadAnnotations (): void {
+    console.log('loadAnnotations')
     Promise.all([
       this.loadView(this.rightView, this.rightTracker?.currentRange),
       this.loadView(this.leftView, this.leftTracker?.currentRange)
@@ -174,7 +174,7 @@ export class RecogitoEditor implements AnnotationEditor {
     })
   }
 
-  public loadView(view?: Element, range? : [number, number]): Promise<void> {
+  public loadView (view?: Element, range? : [number, number]): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!view || !range) {
         resolve()
@@ -184,19 +184,19 @@ export class RecogitoEditor implements AnnotationEditor {
       const offset = calculateStartOffset(this.root, view)
       range = [range[0] + offset, range[1] + offset]
 
-      let options: DiamLoadAnnotationsOptions = {
-        range: range,
+      const options: DiamLoadAnnotationsOptions = {
+        range,
         includeText: false
       }
-      
+
       this.ajax.loadAnnotations(options)
-        .then((doc: CompactAnnotatedText) =>  this.convertAnnotations(doc, view || this.root))
+        .then((doc: CompactAnnotatedText) => this.convertAnnotations(doc, view || this.root))
         .then(() => resolve())
     })
   }
 
-  private renderDocument(): void {
-    console.log("renderDocument")
+  private renderDocument (): void {
+    console.log('renderDocument')
 
     if (!this.recogito) {
       console.error('It seems RecogitoJS has not yet been initialized', this)
@@ -219,7 +219,7 @@ export class RecogitoEditor implements AnnotationEditor {
     this.recogito.setAnnotations(allAnnotations)
   }
 
-  private convertAnnotations(doc: CompactAnnotatedText, view: Element) {
+  private convertAnnotations (doc: CompactAnnotatedText, view: Element) {
     const webAnnotations: Array<WebAnnotation> = []
 
     if (doc.spans) {
@@ -279,6 +279,7 @@ export class RecogitoEditor implements AnnotationEditor {
   }
 
   public destroy (): void {
+    this.connections.destroy()
     this.recogito.destroy()
   }
 
@@ -311,11 +312,11 @@ export class RecogitoEditor implements AnnotationEditor {
     this.ajax.selectAnnotation(annotation.id.substring('1'))
   }
 
-  scrollTo(args: { offset: number; position: string; }): void {
-      console.log("Implement scrollTo")
-      const range = offsetToRange(this.root, args.offset, args.offset)
-      if (!range) return
-      range.startContainer?.parentElement?.scrollIntoView(
-        { behavior: "auto", block: "center", inline: "nearest" })
+  scrollTo (args: { offset: number; position: string; }): void {
+    console.log('Implement scrollTo')
+    const range = offsetToRange(this.root, args.offset, args.offset)
+    if (!range) return
+    range.startContainer?.parentElement?.scrollIntoView(
+      { behavior: 'auto', block: 'center', inline: 'nearest' })
   }
 }
