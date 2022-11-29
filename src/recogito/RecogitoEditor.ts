@@ -198,8 +198,6 @@ export class RecogitoEditor implements AnnotationEditor {
   }
 
   private renderDocument (): void {
-    console.log('renderDocument')
-
     if (!this.recogito) {
       console.error('It seems RecogitoJS has not yet been initialized', this)
       return
