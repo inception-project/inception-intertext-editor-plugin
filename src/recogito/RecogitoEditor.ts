@@ -18,10 +18,10 @@
 import '@recogito/recogito-js/dist/recogito.min.css'
 import { Recogito } from '@recogito/recogito-js/src'
 import Connections from '@recogito/recogito-connections/src'
-import { AnnotationEditor, CompactAnnotatedText, CompactAnnotationMarker, CompactSpan, DiamAjax, VID } from '@inception-project/inception-js-api'
-import { CompactRelation } from '@inception-project/inception-js-api/src/model/compact/CompactRelation'
+import { AnnotatedText, AnnotationEditor, Span, unpackCompactAnnotatedTextV2, VID } from "@inception-project/inception-js-api"
+import { CompactAnnotatedText } from '@inception-project/inception-js-api/src/model/compact_v2'
 import './RecogitoEditor.scss'
-import { DiamLoadAnnotationsOptions } from '@inception-project/inception-js-api/src/diam/DiamAjax'
+import { DiamAjax, DiamLoadAnnotationsOptions } from '@inception-project/inception-js-api/src/diam/DiamAjax'
 import { ViewportTracker } from '@inception-project/inception-js-api/src/util/ViewportTracker'
 import { calculateStartOffset, offsetToRange } from '@inception-project/inception-js-api/src/util/OffsetUtils'
 import convert from 'color-convert'
@@ -188,11 +188,12 @@ export class RecogitoEditor implements AnnotationEditor {
 
       const options: DiamLoadAnnotationsOptions = {
         range,
-        includeText: false
+        includeText: false,
+        format: 'compact_v2'
       }
 
       this.ajax.loadAnnotations(options)
-        .then((doc: CompactAnnotatedText) => this.convertAnnotations(doc, view || this.root))
+        .then((doc: CompactAnnotatedText) => this.convertAnnotations(unpackCompactAnnotatedTextV2(doc), view || this.root))
         .then(() => resolve())
     })
   }
@@ -219,73 +220,70 @@ export class RecogitoEditor implements AnnotationEditor {
     this.recogito.setAnnotations(allAnnotations)
   }
 
-  private convertAnnotations (doc: CompactAnnotatedText, view: Element) {
+  private convertAnnotations (doc: AnnotatedText, view: Element) {
     const webAnnotations: Array<WebAnnotation> = []
-    const annotationMarkers = this.makeMarkerMap(doc.annotationMarkers)
     
     if (doc.spans) {
-      webAnnotations.push(...this.compactSpansToWebAnnotation(doc, annotationMarkers))
+      webAnnotations.push(...this.compactSpansToWebAnnotation(doc))
     }
 
     if (doc.relations) {
-      webAnnotations.push(...this.compactRelationsToWebAnnotation(doc, annotationMarkers))
+      webAnnotations.push(...this.compactRelationsToWebAnnotation(doc))
     }
 
     const viewId = view.classList.contains('view-left') ? 'left' : 'right'
     this.annotations[viewId] = webAnnotations
 
-    console.info(`Loaded ${webAnnotations.length} annotations from server (${doc.spans?.length || 0} spans and ${doc.relations?.length || 0} relations)`)
+    console.info(`Loaded ${webAnnotations.length} annotations from server (${doc.spans.size} spans and ${doc.relations.size} relations)`)
   }
 
-  private compactSpansToWebAnnotation (doc: CompactAnnotatedText, annotationMarkers: Map<VID, Array<CompactAnnotationMarker>>): Array<WebAnnotation> {
+  private compactSpansToWebAnnotation (doc: AnnotatedText): Array<WebAnnotation> {
     const offset = doc.window[0]
-    const spans = doc.spans as Array<CompactSpan>
-    return spans.map(span => {
-      // console.log(`From ${span[1][0][0]}-${span[1][0][1]} +${offset}`, this.root)
-
+    const spans = doc.spans
+    return Array.from(spans.values()).map((span: Span) => {
       const classList = ['i7n-highlighted']
-      const ms = annotationMarkers.get(span[0]) || []
-      ms.forEach(m => classList.push(`i7n-marker-${m[0]}`))
+      const ms = doc.annotationMarkers.get(span.vid) || []
+      ms.forEach(m => classList.push(`i7n-marker-${m.type}`))
   
       return {
-        id: '#' + span[0],
+        id: '#' + span.vid,
         type: 'Annotation',
         body: {
           type: 'TextualBody',
           purpose: 'tagging',
-          color: span[2]?.c || '#000000',
-          value: span[2]?.l || '',
+          color: span.color || '#000000',
+          value: span.label || '',
           classes: classList
         },
         target: {
-          selector: { type: 'TextPositionSelector', start: offset + span[1][0][0], end: offset + span[1][0][1] }
+          selector: { type: 'TextPositionSelector', start: offset + span.offsets[0][0], end: offset + span.offsets[0][1] }
         }
       }
     })
   }
 
-  private compactRelationsToWebAnnotation (doc: CompactAnnotatedText, annotationMarkers: Map<VID, Array<CompactAnnotationMarker>>): Array<WebAnnotation> {
-    const relations = doc.relations as Array<CompactRelation>
-    return relations.map(relation => {
+  private compactRelationsToWebAnnotation (doc: AnnotatedText): Array<WebAnnotation> {
+    const relations = doc.relations
+    return Array.from(relations.values()).map(relation => {
 
       const classList = ['i7n-highlighted']
-      const ms = annotationMarkers.get(relation[0]) || []
-      ms.forEach(m => classList.push(`i7n-marker-${m[0]}`))
+      const ms = doc.annotationMarkers.get(relation.vid) || []
+      ms.forEach(m => classList.push(`i7n-marker-${m.type}`))
 
       return {
-        id: '#' + relation[0],
+        id: '#' + relation.vid,
         type: 'Annotation',
         body: {
           type: 'TextualBody',
           purpose: 'tagging',
-          color: relation[2]?.c || '#000000',
-          value: relation[2]?.l || '',
+          color: relation.color || '#000000',
+          value: relation.label || '',
           classes: classList
         },
         motivation: 'linking',
         target: [
-          { id: '#' + relation[1][0][0] },
-          { id: '#' + relation[1][1][0] }
+          { id: '#' + relation.arguments[0].targetId },
+          { id: '#' + relation.arguments[1].targetId }
         ]
       }
     })
