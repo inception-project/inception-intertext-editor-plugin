@@ -24,6 +24,8 @@ body {
 .r6o-content-wrapper {
   .i7n-marker-focus {
     box-shadow: 0px 2px 0px 0px var(--i7n-focus-color) !important;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
 }
 
