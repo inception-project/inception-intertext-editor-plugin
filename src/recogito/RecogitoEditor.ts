@@ -244,6 +244,8 @@ export class RecogitoEditor implements AnnotationEditor {
       const classList = ['i7n-highlighted']
       const ms = doc.annotationMarkers.get(span.vid) || []
       ms.forEach(m => classList.push(`i7n-marker-${m.type}`))
+      const cms = span.comments || []
+      cms.forEach(c => classList.push(`i7n-marker-${c.type}`))
   
       return {
         id: '#' + span.vid,
@@ -269,6 +271,8 @@ export class RecogitoEditor implements AnnotationEditor {
       const classList = ['i7n-highlighted']
       const ms = doc.annotationMarkers.get(relation.vid) || []
       ms.forEach(m => classList.push(`i7n-marker-${m.type}`))
+      const cms = relation.comments || []
+      cms.forEach(c => classList.push(`i7n-marker-${c.type}`))
 
       return {
         id: '#' + relation.vid,

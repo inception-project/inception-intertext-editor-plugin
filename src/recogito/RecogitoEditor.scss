@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@import 'InceptionEditorColors.scss';
+@import '~@inception-project/inception-js-api/src/style/InceptionEditorColors.scss';
 
 body {
   line-height: 200%;
@@ -27,6 +27,11 @@ body {
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }
+
+  .r6o-annotation.i7n-marker-error {
+    border-bottom-color: var(--i7n-error-color) !important;
+    border-bottom-style: dashed !important;
+  }
 }
 
 svg.r6o-connections-canvas {
@@ -34,6 +39,15 @@ svg.r6o-connections-canvas {
     .r6o-connections-edge-path {
       .r6o-connections-edge-path-outer {
         stroke: var(--i7n-focus-color) !important;
+      }
+    }
+  }
+
+  .r6o-connections-edge.i7n-marker-error {
+    .r6o-connections-edge-path {
+      .r6o-connections-edge-path-buffer {
+        stroke: var(--i7n-error-color) !important;
+        stroke-dasharray: 6 3 !important;
       }
     }
   }
