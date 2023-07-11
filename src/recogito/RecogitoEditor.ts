@@ -108,6 +108,8 @@ export class RecogitoEditor implements AnnotationEditor {
     recogito.setAnnotations = annotations => {
       // Set annotations on instance first
       return _setAnnotations(annotations).then(() => {
+        this.resetConnectionDragState()
+    
         for (const annotation of annotations) {
           for (const element of this.root.querySelectorAll(`[data-id="${annotation.id}"]`)) {
             const c = convert.hex.rgb(annotation.body.color)
@@ -217,7 +219,16 @@ export class RecogitoEditor implements AnnotationEditor {
     }
     this.connections.canvas.connections = []
 
+    this.resetConnectionDragState()
+
     this.recogito.setAnnotations(allAnnotations)
+  }
+
+  private resetConnectionDragState() {
+    this.connections.canvas.onLeaveAnnotation()
+    if (this.connections.canvas.currentFloatingEdge) {
+      this.connections.canvas.onCancelConnection()
+    }
   }
 
   private convertAnnotations (doc: AnnotatedText, view: Element) {
@@ -328,7 +339,6 @@ export class RecogitoEditor implements AnnotationEditor {
   }
 
   scrollTo (args: { offset: number; position: string; }): void {
-    console.log('Implement scrollTo')
     const range = offsetToRange(this.root, args.offset, args.offset)
     if (!range) return
     range.startContainer?.parentElement?.scrollIntoView(

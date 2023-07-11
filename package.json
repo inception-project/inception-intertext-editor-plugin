@@ -9,7 +9,7 @@
     "@inception-project/inception-js-api": "*",
     "@recogito/recogito-js": "^1.8.2",
     "@recogito/recogito-connections": "^0.1.11",
-    "@recogito/recogito-client-core": "1.7.7",
+    "@recogito/recogito-client-core": "1.7.8",
     "color-convert": "^2.0.1"
   },
   "devDependencies": {
