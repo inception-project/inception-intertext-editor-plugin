@@ -18,6 +18,8 @@ This repository is an example based on the [RecogitoJS](https://github.com/recog
 
 ```
 
+Note that importing generic XML is currently an experimental feature that needs to be activated by creating (or updating) a `settings.properties` file in your INCEpTION application home and adding the line `format.generic-xml.enabled=true`.
+
 Starting with INCEpTION v23, external editor plugins are supported. To use this editor, first create a folder named `editors` in your INCEpTION application home. By default, this is `~/.inception`, but on server installations, you will usually have set it to something else such as `/srv/inception`.
 
 Clone this repository as a sub-folder under the `editors` folder.
