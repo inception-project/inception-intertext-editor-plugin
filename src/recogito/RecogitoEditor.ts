@@ -191,6 +191,9 @@ export class RecogitoEditor implements AnnotationEditor {
       const options: DiamLoadAnnotationsOptions = {
         range,
         includeText: false,
+        clipSpans: true,
+        clipArcs: false,
+        longArcs: true,
         format: 'compact_v2'
       }
 
