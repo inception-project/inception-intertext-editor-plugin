@@ -2,5 +2,6 @@ name: InterText policy
 version: 0.1
 case_sensitive: false
 policies:
+  - { elements: ["html", "head", "body", "title"], action: PASS }
   - { elements: ["div"], action: "PASS" }
   - { attributes: ["class"], action: "PASS" }
