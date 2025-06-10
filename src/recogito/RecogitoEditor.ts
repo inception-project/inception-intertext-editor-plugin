@@ -18,7 +18,7 @@
 import '@recogito/recogito-js/dist/recogito.min.css'
 import { Recogito } from '@recogito/recogito-js/src'
 import Connections from '@recogito/recogito-connections/src'
-import { AnnotatedText, AnnotationEditor, Span, unpackCompactAnnotatedTextV2, VID } from "@inception-project/inception-js-api"
+import { AnnotatedText, AnnotationEditor, Offsets, Span, unpackCompactAnnotatedTextV2, VID } from "@inception-project/inception-js-api"
 import { CompactAnnotatedText } from '@inception-project/inception-js-api/src/model/compact_v2'
 import './RecogitoEditor.scss'
 import { DiamAjax, DiamLoadAnnotationsOptions } from '@inception-project/inception-js-api/src/diam/DiamAjax'
@@ -171,14 +171,14 @@ export class RecogitoEditor implements AnnotationEditor {
   public loadAnnotations (): void {
     console.log('loadAnnotations')
     Promise.all([
-      this.loadView(this.rightView, this.rightTracker?.currentRange),
-      this.loadView(this.leftView, this.leftTracker?.currentRange)
+      this.loadView('left', this.leftView, this.leftTracker?.currentRange),
+      this.loadView('right', this.rightView, this.rightTracker?.currentRange)
     ]).then(() => {
       this.renderDocument()
     })
   }
 
-  public loadView (view?: Element, range? : [number, number]): Promise<void> {
+  public loadView (side: string, view?: Element, range? : [number, number]): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!view || !range) {
         resolve()
@@ -186,10 +186,10 @@ export class RecogitoEditor implements AnnotationEditor {
       }
 
       const offset = calculateStartOffset(this.root, view)
-      range = [range[0] + offset, range[1] + offset]
+      const adjustedRange : [number, number] = [range[0] + offset, range[1] + offset]
 
       const options: DiamLoadAnnotationsOptions = {
-        range,
+        range: adjustedRange,
         includeText: false,
         clipSpans: true,
         clipArcs: false,
@@ -198,7 +198,7 @@ export class RecogitoEditor implements AnnotationEditor {
       }
 
       this.ajax.loadAnnotations(options)
-        .then((doc: CompactAnnotatedText) => this.convertAnnotations(unpackCompactAnnotatedTextV2(doc), view || this.root))
+        .then((doc: CompactAnnotatedText) => this.convertAnnotations(side, unpackCompactAnnotatedTextV2(doc), view || this.root, adjustedRange))
         .then(() => resolve())
     })
   }
@@ -234,7 +234,7 @@ export class RecogitoEditor implements AnnotationEditor {
     }
   }
 
-  private convertAnnotations (doc: AnnotatedText, view: Element) {
+  private convertAnnotations (side: string, doc: AnnotatedText, view: Element, range: [number, number]) {
     const webAnnotations: Array<WebAnnotation> = []
     
     if (doc.spans) {
@@ -248,7 +248,7 @@ export class RecogitoEditor implements AnnotationEditor {
     const viewId = view.classList.contains('view-left') ? 'left' : 'right'
     this.annotations[viewId] = webAnnotations
 
-    console.info(`Loaded ${webAnnotations.length} annotations from server (${doc.spans.size} spans and ${doc.relations.size} relations)`)
+    console.info(`[${side}] Loaded ${webAnnotations.length} annotations from server (${doc.spans.size} spans and ${doc.relations.size} relations in range ${range[0]}-${range[1]} [${range[1]-range[0]}])`)
   }
 
   private compactSpansToWebAnnotation (doc: AnnotatedText): Array<WebAnnotation> {
@@ -346,22 +346,5 @@ export class RecogitoEditor implements AnnotationEditor {
     if (!range) return
     range.startContainer?.parentElement?.scrollIntoView(
       { behavior: 'auto', block: 'center', inline: 'nearest' })
-  }
-
-  private makeMarkerMap<T> (markerList: T[] | undefined): Map<VID, Array<T>> {
-    const markerMap = new Map<VID, Array<T>>()
-    if (markerList) {
-      markerList.forEach(marker => {
-        marker[1].forEach(vid => {
-          let ms = markerMap.get(vid)
-          if (!ms) {
-            ms = []
-            markerMap.set(vid, ms)
-          }
-          ms.push(marker)
-        })
-      })
-    }
-    return markerMap
   }
 }
